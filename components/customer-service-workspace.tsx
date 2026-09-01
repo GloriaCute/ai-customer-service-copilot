@@ -27,7 +27,7 @@ export function CustomerServiceWorkspace() {
   const successfulResult = !isDemoMode && realResult?.status !== "error" ? realResult : undefined;
   const answer = editedAnswers[selectedId] ?? (isDemoMode ? mockResult.answer : successfulResult?.answer ?? "");
   const sources = isDemoMode ? (status === "success" ? mockResult.sources : []) : successfulResult?.sources ?? [];
-  const latency = isDemoMode ? (status === "success" || status === "knowledge_insufficient" ? `${mockResult.latencyMs} ms` : "—") : successfulResult ? `${successfulResult.latencyMs} ms` : "—";
+  const latency = isDemoMode ? (status === "success" || status === "clarify" || status === "knowledge_insufficient" ? `${mockResult.latencyMs} ms` : "—") : successfulResult ? `${successfulResult.latencyMs} ms` : "—";
   const errorMessage = !isDemoMode && realResult?.status === "error" ? realResult.message : undefined;
   const isLoading = status === "loading";
 
