@@ -18,8 +18,9 @@ export function CustomerServiceWorkspace() {
   const [customerStatuses, setCustomerStatuses] = useState<Record<string, CustomerStatus>>(() => Object.fromEntries(mockConversations.map((item) => [item.id, item.initialCustomerStatus])));
   const [questions, setQuestions] = useState<Record<string, string>>(() => Object.fromEntries(mockConversations.map((item) => [item.id, item.question])));
   const [replies, setReplies] = useState<Record<string, string>>({});
+  const [sentReplies, setSentReplies] = useState<Record<string, string[]>>({});
   const [editedAnswers, setEditedAnswers] = useState<Record<string, string>>({});
-  const [inputError, setInputError] = useState("");
+  const [, setInputError] = useState("");
   const conversation = useMemo(() => mockConversations.find((item) => item.id === selectedId) ?? mockConversations[0], [selectedId]);
   const realResult = realResults[selectedId];
   const mockResult = mockResults[selectedId] ?? conversation.mockResult;
@@ -65,7 +66,13 @@ export function CustomerServiceWorkspace() {
     } finally { setRealLoading((value) => ({ ...value, [targetId]: false })); }
   }
 
-  const loadingStatus = status === "loading";
   const displayedStatus: AIStatus = status;
-  return <section className="workspace" aria-label="客服工作台"><CustomerList conversations={mockConversations} selectedId={selectedId} statuses={customerStatuses} onSelect={(id) => { setSelectedId(id); setInputError(""); }} /><ConversationPanel conversation={conversation} question={questions[selectedId]} reply={replies[selectedId] ?? ""} inputError={inputError} isLoading={loadingStatus} isDemoMode={isDemoMode} onQuestionChange={(value) => setQuestions((current) => ({ ...current, [selectedId]: value }))} onReplyChange={(value) => setReplies((current) => ({ ...current, [selectedId]: value }))} onGenerate={generateSuggestion} /><AICopilotPanel status={displayedStatus} answer={answer} errorMessage={errorMessage} sources={sources} latencyMs={isDemoMode ? mockResult.latencyMs : successfulResult?.latencyMs ?? 0} decomposed={isDemoMode ? mockResult.decomposed : false} isDemoMode={isDemoMode} customerStatus={customerStatuses[selectedId]} onAdopt={() => setReplies((current) => ({ ...current, [selectedId]: answer }))} onSaveEdit={(value) => setEditedAnswers((current) => ({ ...current, [selectedId]: value }))} onRegenerate={generateSuggestion} onEscalate={() => setCustomerStatuses((current) => ({ ...current, [selectedId]: "需人工确认" }))} /></section>;
+  function sendReply() {
+    const reply = replies[selectedId]?.trim();
+    if (!reply) return;
+    setSentReplies((current) => ({ ...current, [selectedId]: [...(current[selectedId] ?? []), reply] }));
+    setReplies((current) => ({ ...current, [selectedId]: "" }));
+  }
+
+  return <section className="workspace" aria-label="客服工作台"><CustomerList conversations={mockConversations} selectedId={selectedId} statuses={customerStatuses} onSelect={(id) => { setSelectedId(id); setInputError(""); }} /><ConversationPanel conversation={conversation} question={questions[selectedId]} reply={replies[selectedId] ?? ""} sentReplies={sentReplies[selectedId] ?? []} onReplyChange={(value) => setReplies((current) => ({ ...current, [selectedId]: value }))} onSend={sendReply} /><AICopilotPanel status={displayedStatus} answer={answer} errorMessage={errorMessage} sources={sources} latencyMs={isDemoMode ? mockResult.latencyMs : successfulResult?.latencyMs ?? 0} decomposed={isDemoMode ? mockResult.decomposed : false} isDemoMode={isDemoMode} customerStatus={customerStatuses[selectedId]} onGenerate={generateSuggestion} onAdopt={() => setReplies((current) => ({ ...current, [selectedId]: answer }))} onSaveEdit={(value) => setEditedAnswers((current) => ({ ...current, [selectedId]: value }))} onRegenerate={generateSuggestion} onEscalate={() => setCustomerStatuses((current) => ({ ...current, [selectedId]: "需人工确认" }))} /></section>;
 }
