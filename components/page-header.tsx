@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 
 const pageMeta = {
-  "/": { label: "收件箱", description: "处理客户会话并使用企业知识生成建议" },
+  "/inbox": { label: "收件箱", description: "处理客户会话并使用企业知识生成建议" },
   "/knowledge": { label: "知识库", description: "查看 AI 当前可使用的企业知识资料" },
   "/evaluation": { label: "AI 评测", description: "查看代表性案例的回答状态与验证结果" },
 } as const;
@@ -12,7 +12,7 @@ const isDemoMode = process.env.NEXT_PUBLIC_DEMO_MODE !== "false";
 
 export function PageHeader() {
   const pathname = usePathname();
-  const currentPage = pageMeta[pathname as keyof typeof pageMeta] ?? pageMeta["/"];
+  const currentPage = pageMeta[pathname as keyof typeof pageMeta] ?? pageMeta["/inbox"];
 
   return (
     <header className="app-header">
