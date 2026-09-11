@@ -1,6 +1,6 @@
-import type { CustomerStatus, MockConversation } from "../types/customer";
+import type { Conversation, CustomerStatus } from "../types/customer";
 
-type CustomerListProps = { conversations: MockConversation[]; selectedId: string; statuses: Record<string, CustomerStatus>; onSelect: (id: string) => void };
+type CustomerListProps = { conversations: Conversation[]; selectedId: string; statuses: Record<string, CustomerStatus>; onSelect: (id: string) => void; onCreate: () => void };
 
 const conversationTags: Record<string, string[]> = {
   "customer-a": ["退换货", "复合规则"],
@@ -9,11 +9,12 @@ const conversationTags: Record<string, string[]> = {
   "customer-d": ["知识不足"],
 };
 
-export function CustomerList({ conversations, selectedId, statuses, onSelect }: CustomerListProps) {
+export function CustomerList({ conversations, selectedId, statuses, onSelect, onCreate }: CustomerListProps) {
   return (
     <aside className="panel customer-panel">
       <header className="panel-header inbox-header">
         <div className="inbox-title"><h2>收件箱</h2><span>{conversations.length}</span></div>
+        <button className="new-conversation-button" type="button" onClick={onCreate}><span aria-hidden="true">＋</span>新建测试会话</button>
       </header>
       <div className="customer-list">
         {conversations.map((customer) => {
@@ -25,7 +26,7 @@ export function CustomerList({ conversations, selectedId, statuses, onSelect }: 
                 <div className="customer-topline"><strong>{customer.name}</strong><time>{customer.time}</time></div>
                 <p>{customer.question}</p>
                 <div className="customer-meta">
-                  {(conversationTags[customer.id] ?? [customer.topic]).map((tag) => <span className={`conversation-tag tag-${tag}`} key={tag}>{tag}</span>)}
+                  {(customer.isCustom ? ["测试"] : conversationTags[customer.id] ?? [customer.topic]).map((tag) => <span className={`conversation-tag tag-${tag}`} key={tag}>{tag}</span>)}
                   {needsReview ? <span className="conversation-tag tag-review">人工确认</span> : null}
                 </div>
               </div>

@@ -5,17 +5,19 @@ import type { AIStatus, KnowledgeSource } from "../types/ai";
 import type { CustomerStatus } from "../types/customer";
 import { SourceCard } from "./source-card";
 
-type AICopilotPanelProps = { status: AIStatus; answer: string; errorMessage?: string; sources: KnowledgeSource[]; latencyMs: number; decomposed: boolean; isDemoMode: boolean; customerStatus: CustomerStatus; onGenerate: () => void; onAdopt: () => void; onSaveEdit: (value: string) => void; onRegenerate: () => void; onEscalate: () => void };
+type AICopilotPanelProps = { status: AIStatus; answer: string; errorMessage?: string; idleMessage?: string; noticeMessage?: string; sources: KnowledgeSource[]; latencyMs: number; decomposed: boolean; isDemoMode: boolean; customerStatus: CustomerStatus; onGenerate: () => void; onAdopt: () => void; onSaveEdit: (value: string) => void; onRegenerate: () => void; onEscalate: () => void };
 const statusCopy: Record<AIStatus, string> = { idle: "待生成", loading: "正在生成", success: "知识支持", clarify: "需要补充信息", knowledge_insufficient: "知识不足", error: "服务异常" };
 
-export function AICopilotPanel({ status, answer, errorMessage, sources, latencyMs, decomposed, isDemoMode, customerStatus, onGenerate, onAdopt, onSaveEdit, onRegenerate, onEscalate }: AICopilotPanelProps) {
+export function AICopilotPanel({ status, answer, errorMessage, idleMessage, noticeMessage, sources, latencyMs, decomposed, isDemoMode, customerStatus, onGenerate, onAdopt, onSaveEdit, onRegenerate, onEscalate }: AICopilotPanelProps) {
   const [isEditing, setIsEditing] = useState(false); const [editValue, setEditValue] = useState(answer); const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   useEffect(() => { setIsEditing(false); setEditValue(answer); setIsDetailsOpen(false); }, [answer]);
   const isLoading = status === "loading"; const hasAnswer = status === "success" || status === "clarify" || status === "knowledge_insufficient"; const isInsufficient = status === "knowledge_insufficient";
   const visibleSources = sources.slice(0, 3);
   const sourceCountLabel = visibleSources.length ? `${visibleSources.length}` : "—";
+  const sourcesLabel = isInsufficient ? "检索到的资料" : "知识依据";
+  const sourcesTitle = visibleSources.length ? `${sourcesLabel}（${sourceCountLabel}）` : sourcesLabel;
   function saveEdit() { onSaveEdit(editValue.trim() || answer); setIsEditing(false); }
-  const answerContent = isLoading ? "AI 正在检索企业知识并整理建议…" : status === "error" ? errorMessage ?? "AI 服务暂时不可用，请稍后重试。" : hasAnswer ? answer : "选择会话后，生成一条可供客服审核的建议回复。";
+  const answerContent = noticeMessage ?? (isLoading ? "AI 正在检索企业知识并整理建议…" : status === "error" ? errorMessage ?? "AI 服务暂时不可用，请稍后重试。" : hasAnswer ? answer : idleMessage ?? "选择会话后，生成一条可供客服审核的建议回复。");
   return (
     <aside className="panel copilot-panel">
       <header className="copilot-header">
@@ -26,7 +28,7 @@ export function AICopilotPanel({ status, answer, errorMessage, sources, latencyM
         <p className="copilot-description">基于宜家公开官方退换货与会员资料生成可审核建议。</p>
         <section className="suggestion-section">
           <div className="section-title"><h3>建议回复</h3></div>
-          <div className={`ai-answer ${isInsufficient ? "answer-insufficient" : ""}`}>
+          <div className={`ai-answer ${isInsufficient ? "answer-insufficient" : ""} ${noticeMessage ? "answer-notice" : ""}`}>
             {isEditing ? <textarea className="answer-editor" aria-label="编辑 AI 建议回复" value={editValue} onChange={(event) => setEditValue(event.target.value)} rows={8} /> : <p className={isLoading ? "loading-copy" : undefined}>{answerContent}</p>}
           </div>
           {isInsufficient ? <p className="insufficient-notice">知识依据不足，建议人工确认</p> : null}
@@ -42,7 +44,8 @@ export function AICopilotPanel({ status, answer, errorMessage, sources, latencyM
               {isEditing ? <button className="secondary-button full-button" type="button" onClick={saveEdit}>保存修改</button> : null}
             </div>
             <section className="sources-section">
-              <div className="section-title"><h3>{visibleSources.length ? `知识依据（${sourceCountLabel}）` : "知识依据"}</h3></div>
+              <div className="section-title"><h3>{sourcesTitle}</h3></div>
+              {isInsufficient && visibleSources.length ? <p className="insufficient-sources-note">当前检索资料不足以支持确定性回答。</p> : null}
               {visibleSources.length ? visibleSources.map((source) => <SourceCard key={source.segmentId ?? `${source.title}-${source.tag}`} {...source} />) : <p className="empty-sources">暂无可展示知识来源</p>}
             </section>
             <section className="processing-section">

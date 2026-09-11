@@ -1,7 +1,7 @@
-import type { MockConversation } from "../types/customer";
+import type { Conversation } from "../types/customer";
 
 type ConversationPanelProps = {
-  conversation: MockConversation;
+  conversation: Conversation;
   question: string;
   reply: string;
   sentReplies: string[];
@@ -24,7 +24,7 @@ export function ConversationPanel({ conversation, question, reply, sentReplies, 
       <header className="conversation-header">
         <div className="conversation-profile">
           <div className="conversation-title-row"><h2>{conversation.name}</h2><span className="business-tag">{conversation.topic}</span>{showQuestionSummary ? <span className="business-tag tag-composite">复合规则</span> : null}</div>
-          <p>{conversation.topic === "会员咨询" ? "会员客户" : "访客客户"} · 当前会话</p>
+          <p>{conversation.isCustom ? "临时会话" : conversation.topic === "会员咨询" ? "会员客户" : "访客客户"} · 当前会话</p>
         </div>
         <button className="more-button" type="button" aria-label="更多会话操作">•••</button>
       </header>
