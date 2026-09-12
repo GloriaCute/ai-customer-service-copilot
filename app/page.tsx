@@ -1,5 +1,5 @@
-import { CustomerServiceWorkspace } from "../components/customer-service-workspace";
+import { LandingPage } from "../components/landing-page";
 
 export default function Home() {
-  return <CustomerServiceWorkspace />;
+  return <LandingPage />;
 }
