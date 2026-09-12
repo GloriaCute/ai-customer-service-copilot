@@ -1,4 +1,4 @@
-# AI Customer Service Copilot
+# AI 客服 Copilot
 
 > 面向企业一线客服的 AI Copilot（智能辅助），基于企业知识生成可审核的建议回复，并由人工坐席保留最终决策权。
 
@@ -8,7 +8,7 @@
 
 ---
 
-## 1. Project Overview
+## 1. 项目概览
 
 这是一个用于 AI 产品实习作品集展示的 **Functional Prototype（可运行原型）**，而非生产级企业系统。
 
@@ -55,7 +55,7 @@ Landing Page 使用当前真实 Inbox、Knowledge 和 Evaluation 页面截图，
 
 ---
 
-## 2. Problem & Product Positioning
+## 2. 问题与产品定位
 
 企业客服常需在政策、FAQ 和商品规则间查找信息。简单问题会增加重复检索成本；同时涉及会员身份、购买时间、商品类别等条件的复合问题，容易遗漏某一条适用规则。
 
@@ -68,7 +68,7 @@ Landing Page 使用当前真实 Inbox、Knowledge 和 Evaluation 页面截图，
 
 ---
 
-## 3. Product Workflow
+## 3. 核心工作流
 
 ```text
 客户问题
@@ -84,7 +84,7 @@ Inbox 还支持“新建测试会话”：用户可以输入一个临时客户�
 
 ---
 
-## 4. AI / RAG Architecture
+## 4. AI / RAG 架构
 
 RAG（Retrieval-Augmented Generation，检索增强生成）流程由既有 Dify Chatflow 执行，Web 前端不重新实现检索或推理链路。
 
@@ -120,7 +120,7 @@ Browser
 
 ---
 
-## 5. Structured Decisions & Knowledge Citations
+## 5. 回答状态、决策边界与知识引用
 
 ### 结构化决策状态
 
@@ -148,7 +148,7 @@ Real Mode 仅展示 Dify API 实际返回的知识引用，不伪造来源。进
 
 ---
 
-## 6. Evaluation, Failure Analysis & Iteration
+## 6. 评测、回归测试与迭代
 
 本项目使用代表性问题进行固定回归和重复稳定性测试。这些结果用于验证当前原型在锁定模型、Prompt（提示词）和检索配置下的功能行为，**不代表生产环境准确率、泛化能力、真实客服效率或业务效果。**
 
@@ -167,7 +167,7 @@ Evaluation 页面当前展示三个核心案例，三个案例均通过本轮验
 | 我是会员，半年前买了一台家用电器，可以退吗？ | 知识支持 | 知识支持 | 通过 | 家用电器排除规则优先于会员 365 天期限，不能仅依据期限判断可普通退货 |
 | 南京宜家今天几点关门？ | 知识不足 | 知识不足 | 通过 | 当前知识库不包含实时营业信息，系统没有编造营业时间 |
 
-### Knowledge / RAG 迭代：V1 → V2 → V2.1
+### 知识库 / RAG 迭代：V1 → V2 → V2.1
 
 - **V1：** 原始 PDF 直接入库，Chunk（知识切片）较大；上下文较完整，但检索噪声较高。
 - **V2：** 清洗为 Markdown，并按 FAQ / 语义单元拆分知识；引入 Query Decomposition（查询拆解）、双路 Knowledge Retrieval（知识检索）与结果合并，以提升复合规则问题的覆盖。
@@ -175,7 +175,7 @@ Evaluation 页面当前展示三个核心案例，三个案例均通过本轮验
 
 在当前测试案例中，V2.1 改善了多规则场景下的规则覆盖；这一观察不等同于系统性准确率提升。
 
-### AI Quality Fix / Failure Analysis（质量修复与失败分析）
+### 失败分析与 AI 质量修复
 
 回归测试中，复杂规则问题出现过两类不稳定行为：
 
@@ -197,7 +197,7 @@ Evaluation 页面当前展示三个核心案例，三个案例均通过本轮验
 
 ---
 
-## 7. Model & Latency Trade-offs
+## 7. 模型与延迟权衡
 
 模型、Thinking（显式思考）与推理配置都会影响回答稳定性和响应延迟。当前锁定的原型验证配置为：
 
@@ -224,9 +224,9 @@ Evaluation 页面当前展示三个核心案例，三个案例均通过本轮验
 
 ---
 
-## 8. Demo Mode / Real Mode
+## 8. Demo Mode（演示模式）与 Real Mode（真实模式）
 
-### Public Demo
+### Public Demo（公开演示）
 
 公开 Production 环境使用 Demo Mode：
 
@@ -237,7 +237,7 @@ Evaluation 页面当前展示三个核心案例，三个案例均通过本轮验
 
 Demo Mode 可以创建临时测试会话，但不会为任意自定义问题伪造答案。生成时会提示：“公开演示模式仅支持预设案例。自定义问题需要在 Real Mode 下使用。”
 
-### Real Mode
+### Real Mode（真实模式）
 
 Real Mode 通过服务端调用真实 Dify Chatflow，用于受控演示：
 
@@ -251,7 +251,7 @@ Real Mode 支持自定义测试问题。请求由浏览器发送到 Next.js `/ap
 
 ---
 
-## 9. Security & System Boundaries
+## 9. 安全与密钥边界
 
 - `DIFY_API_KEY` 仅由服务端读取；浏览器不直接访问 Dify。
 - `.env.local` 被 Git 忽略，不提交真实密钥。
@@ -261,9 +261,9 @@ Real Mode 支持自定义测试问题。请求由浏览器发送到 Next.js `/ap
 
 ---
 
-## 10. What I Owned & Known Limitations
+## 10. 本人负责内容与已知限制
 
-### What I Owned
+### 本人负责内容
 
 我主导了以下产品与验证工作：
 
@@ -276,7 +276,7 @@ Real Mode 支持自定义测试问题。请求由浏览器发送到 Next.js `/ap
 
 工程实现过程中使用 Codex 等 AI Coding（AI 编程）工具辅助；本人负责需求拆解、方案设计、实现验收、测试验证与关键产品/技术取舍。
 
-### Known Limitations
+### 已知限制
 
 - **知识范围有限：** 当前主要覆盖宜家退货政策、会员 FAQ 和配送资料，不包含实时营业时间、实时库存、订单状态、CRM 数据或用户账户数据；
 - **自定义会话不持久化：** 临时测试会话仅存在于 React 内存，刷新后清除；
@@ -289,9 +289,9 @@ Real Mode 支持自定义测试问题。请求由浏览器发送到 Next.js `/ap
 
 ---
 
-## 11. Tech Stack & Local Setup
+## 11. 技术栈与本地运行
 
-### Tech Stack
+### 技术栈
 
 - **Frontend：** Next.js 16、React 19、TypeScript、Tailwind CSS 4
 - **AI Workflow：** Dify Chatflow
@@ -299,7 +299,7 @@ Real Mode 支持自定义测试问题。请求由浏览器发送到 Next.js `/ap
 - **API：** Next.js Server API Route、REST API
 - **Deployment：** Vercel
 
-### Local Setup
+### 本地运行
 
 安装依赖：
 
@@ -344,6 +344,6 @@ npm run dev
 
 ---
 
-## 12. Project Disclaimer
+## 12. 项目说明与免责声明
 
 本项目是个人 AI 产品作品集原型，基于公开的宜家退换货、会员和配送资料构建，不代表宜家官方产品、合作项目或真实企业部署。
